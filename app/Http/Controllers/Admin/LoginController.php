@@ -21,7 +21,6 @@ class LoginController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
-        $credentials['role'] = 'admin';
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
@@ -32,7 +31,6 @@ class LoginController extends Controller
         return back()->withErrors([
             'error' => 'Your credentials are wrong'
         ])->withInput();
-        dd($credentials);
     }
 
     public function logout(Request $request)

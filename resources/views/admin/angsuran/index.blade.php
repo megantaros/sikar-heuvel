@@ -16,11 +16,13 @@ function formatRupiah($angka){
                 <h3 class="card-title">Data Angsuran Hutang Karyawan</h3>
             </div>
             <div class="card-body">
+                @if (auth()->user()->role == 'admin')
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <a href="{{ route('angsuran.create') }}" class="btn btn-warning">Create Data Hutang Karyawan</a>
                     </div>
                 </div>
+                @endif
 
                 @if (session()->has('success'))
                 <div class="alert alert-success">

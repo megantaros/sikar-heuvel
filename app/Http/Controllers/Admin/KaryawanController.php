@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Karyawan;
@@ -81,6 +82,52 @@ class KaryawanController extends Controller
         return redirect()
             ->route('karyawan.index')
             ->with('success', 'Data karyawan berhasil dihapus.');
+    }
+
+    public function addUserEmployee(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id_karyawan' => 'required',
+            'email' => 'required',
+        ]);
+
+        $employee = Karyawan::findOrFail($validatedData['id_karyawan']);
+
+        $user = User::create([
+            'name' => $employee->nama_karyawan,
+            'email' => $validatedData['email'],
+            'password' => bcrypt('password'),
+            'phone_number' => $employee->telepon,
+            'role' => 'karyawan',
+        ]);
+
+        $employee->id_user = $user->id;
+        $employee->save();
+
+        return redirect()
+            ->route('karyawan.index')
+            ->with('success', 'User berhasil ditambahkan.');
+    }
+
+    public function updateUserEmployee(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'email' => 'required',
+            'password' => 'nullable',
+        ]);
+
+        $employee = Karyawan::findOrFail($id);
+        $user = User::findOrFail($employee->id_user);
+
+        $user->email = $validatedData['email'];
+        if ($validatedData['password'] != '') {
+            $user->password = bcrypt($validatedData['password']);
+        }
+        $user->save();
+
+        return redirect()
+            ->route('karyawan.index')
+            ->with('success', 'Password berhasil diubah.');
     }
 
     public function showEmployee($id)

@@ -16,12 +16,13 @@
                       alt="User Image">
               </div>
               <div class="info">
-                  <a href="#" class="d-block">Super Admin</a>
+                  <a href="#" class="d-block">{{ auth()->user()->name }}</a>
               </div>
           </div>
 
           <!-- Sidebar Menu -->
           <nav class="mt-2">
+               @if (auth()->user()->role == 'admin')
               <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                   data-accordion="false">
                   <li class="nav-item">
@@ -116,6 +117,70 @@
                       </a>
                   </li>
               </ul>
+              @else
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                    data-accordion="false">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.dashboard') }}" class="nav-link">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                Dashboard
+                            </p>
+                        </a>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a href="{{ route('kehadiran.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Data Kehadiran
+                            </p>
+                        </a>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a href="{{ route('hutang.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-money-bill"></i>
+                            <p>
+                                Data Hutang
+                            </p>
+                        </a>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a href="{{ route('gaji.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-money-check"></i>
+                            <p>
+                                Data Gaji
+                            </p>
+                        </a>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a href="{{ route('angsuran.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-money-bill"></i>
+                            <p>
+                                Data Angsuran
+                            </p>
+                        </a>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <p>
+                                Menu
+                            </p>
+                        </a>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.logout') }}" class="nav-link">
+                            <i class="nav-icon fas fa-sign-out-alt"></i>
+                            <p>
+                                Logout
+                            </p>
+                        </a>
+                    </li>
+                </ul>
+              @endif
           </nav>
           <!-- /.sidebar-menu -->
       </div>

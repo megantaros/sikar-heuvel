@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Angsuran;
 use App\Models\Hutang;
+use App\Models\Karyawan;
 use Illuminate\Http\Request;
 
 class AngsuranController extends Controller
@@ -17,6 +18,17 @@ class AngsuranController extends Controller
     public function index()
     {
         $angsurans = Angsuran::with('hutang')->get();
+
+        if (auth()->user()->role == 'karyawan') {
+            $karyawan = Karyawan::where('id_user', auth()->user()->id)->first();
+
+            $angsurans = $angsurans->filter(function ($angsuran) use ($karyawan) {
+                return $angsuran->hutang->id_karyawan == $karyawan->id;
+            });
+
+            return view('admin.angsuran.index', compact('angsurans'));
+        }
+
         return view('admin.angsuran.index', compact('angsurans'));
     }
 

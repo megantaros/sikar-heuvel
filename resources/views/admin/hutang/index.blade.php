@@ -17,11 +17,13 @@ function formatRupiah($angka){
                 <h3 class="card-title">Data Hutang Karyawan</h3>
             </div>
             <div class="card-body">
+                @if (auth()->user()->role == 'admin')
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <a href="{{ route('hutang.create') }}" class="btn btn-warning">Create Data Hutang Karyawan</a>
                     </div>
                 </div>
+                @endif
 
                 @if (session()->has('success'))
                 <div class="alert alert-success">
@@ -39,7 +41,9 @@ function formatRupiah($angka){
                                     <th>Maksimal Hutang</th>
                                     <th>Sisa Hutang</th>
                                     <th>Tanggal Hutang</th>
+                                    @if (auth()->user()->role == 'admin')
                                     <th>Aksi</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -51,6 +55,7 @@ function formatRupiah($angka){
                                     <td>{{ formatRupiah($hutang->maksimal_hutang) }}</td>
                                     <td>{{ formatRupiah($hutang->sisa_hutang) }}</td>
                                     <td>{{ Carbon::parse($hutang->tanggal_hutang)->format('d-m-Y')  }}</td>
+                                    @if (auth()->user()->role == 'admin')
                                     <td>
                                         <form action="{{ route('hutang.destroy', $hutang->id) }}" method="POST">
                                             @csrf
@@ -59,6 +64,7 @@ function formatRupiah($angka){
                                                 class="btn btn-danger mb-2"> <i class="fas fa-trash"></i></button>
                                         </form>
                                     </td>
+                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>

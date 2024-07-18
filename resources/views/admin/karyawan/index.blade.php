@@ -40,12 +40,34 @@
                                 @foreach ($karyawan as $karyawan)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $karyawan->nama_karyawan }}</td>
+                                    <td>
+                                        {{ $karyawan->nama_karyawan }}
+                                        @if ($karyawan->id_user != null)
+                                        <span class="badge badge-success ml-2">User</span>
+                                        @else
+                                        <span class="badge badge-danger ml-2">No User</span>
+                                        @endif
+                                    </td>
                                     <td>{{ $karyawan->jabatan }}</td>
                                     <td>{{ $karyawan->tanggal_lahir }}</td>
                                     <td>{{ $karyawan->alamat }}</td>
                                     <td>{{ $karyawan->telepon }}</td>
                                     <td>
+                                        @if ($karyawan->id_user == null)
+                                        <button class="btn btn-success mb-2"
+                                            data-toggle="modal" 
+                                            data-target="#createUsersModal"
+                                            data-id="{{ $karyawan->id }}"
+                                        >
+                                            <i class="fas fa-user-plus"></i>
+                                        </button>
+                                        @else
+                                        <button class="btn btn-warning mb-2" data-toggle="modal"
+                                            data-target="#editUsersModal" data-id="{{ $karyawan->id }}"
+                                            data-email="{{ $karyawan->user->email }}">
+                                            <i class="fas fa-user-edit"></i>
+                                        </button>
+                                        @endif
                                         <button class="btn btn-secondary mb-2" data-toggle="modal"
                                             data-target="#editKaryawanModal" data-id="{{ $karyawan->id }}"
                                             data-nama="{{ $karyawan->nama_karyawan }}"
@@ -189,6 +211,68 @@
         </div>
     </div>
 </div>
+
+<!-- Create Users Modal -->
+<div class="modal fade" id="createUsersModal" tabindex="-1" aria-labelledby="createUsersModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUsersModalLabel">Create Users Karyawan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formAddUserEmployee" method="POST">
+                    @csrf
+                    @method('POST')
+                    <div class="form-group">
+                        <label for="create_users_email">Email Karyawan</label>
+                        <input type="text" class="form-control" id="create_users_email" name="email" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Users Modal -->
+<div class="modal fade" id="editUsersModal" tabindex="-1" aria-labelledby="editUsersModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUsersModalLabel">Edit Users Karyawan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditUserEmployee" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label for="edit_users_email">Email Karyawan</label>
+                        <input type="text" class="form-control" id="edit_users_email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_users_password">Password
+                            <small class="text-danger">(Kosongkan jika tidak ingin mengubah password)</small>
+                        </label>
+                        <input type="password" class="form-control" id="edit_users_password" name="password">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('js')
@@ -227,6 +311,27 @@ $(document).ready(function() {
         var modal = $(this);
         modal.find('#delete_nama_karyawan').text(nama);
         modal.find('form').attr('action', '{{ route("karyawan.destroy", ":id") }}'.replace(':id', id));
+    });
+
+    // Add User Employee modal
+    $('#createUsersModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+
+        var modal = $(this);
+        modal.find('form').attr('action', '{{ route("add.users") }}');
+        modal.find('form').append('<input type="hidden" name="id_karyawan" value="' + id + '">');
+    });
+
+    // Edit User Employee modal
+    $('#editUsersModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var email = button.data('email');
+
+        var modal = $(this);
+        modal.find('#edit_users_email').val(email);
+        modal.find('form').attr('action', '{{ route("update.users", ":id") }}'.replace(':id', id));
     });
 });
 </script>

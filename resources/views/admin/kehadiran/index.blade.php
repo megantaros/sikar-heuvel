@@ -14,12 +14,32 @@ use Carbon\Carbon;
                 <h3 class="card-title">Data Kehadiran</h3>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12 mb-3">
-                        <button class="btn btn-warning" data-toggle="modal" data-target="#createKehadiranModal">Tambah
-                            Data Kehadiran</button>
+                @if (auth()->user()->role == 'admin')
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <button class="btn btn-warning" data-toggle="modal" data-target="#createKehadiranModal">Tambah Data Kehadiran</button>
+                        </div>
                     </div>
-                </div>
+                @else
+                    <div class="d-flex">
+                        <form class="mr-1" action="{{ route('presensi.masuk') }}" method="post" @if (!is_null($isPresensiMasuk) && !is_null($isPresensiPulang)) hidden @endif>
+                            @csrf
+                            <button type="submit" class="btn btn-success mb-3">Presensi Masuk</button>
+                        </form>
+    
+                        <form action="{{ route('presensi.pulang') }}" method="post" @if (!is_null($isPresensiMasuk) && !is_null($isPresensiPulang)) hidden @endif>
+                            @csrf
+                            <button type="submit" class="btn btn-danger mb-3">Presensi Pulang</button>
+                        </form>
+                    </div>
+
+                    @if (!is_null($isPresensiMasuk) && !is_null($isPresensiPulang))
+                        <div class="alert alert-success">
+                            Anda sudah melakukan presensi masuk dan pulang hari ini
+                        </div>
+                    @endif
+                @endif
+
 
                 @if (session()->has('success'))
                 <div class="alert alert-success">
@@ -35,7 +55,9 @@ use Carbon\Carbon;
                                     <th>Karyawan</th>
                                     <th>Tanggal Kehadiran</th>
                                     <th>Status Kehadiran</th>
+                                    @if (auth()->user()->role == 'admin')
                                     <th>Aksi</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -59,6 +81,7 @@ use Carbon\Carbon;
                                         @endif
                                     </td>
 
+                                    @if (auth()->user()->role == 'admin')
                                     <td>
                                         <a href="{{ route('kehadiran.edit', $item->id) }}"
                                             class="btn btn-secondary mb-2"><i class="fas fa-edit"></i></a>
@@ -70,6 +93,7 @@ use Carbon\Carbon;
                                             </button>
                                         </form>
                                     </td>
+                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>

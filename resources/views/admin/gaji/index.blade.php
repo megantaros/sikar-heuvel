@@ -9,6 +9,7 @@
         return $hasil_rupiah;
     }
 @endphp
+
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary">
@@ -16,12 +17,14 @@
                 <h3 class="card-title">Data Gaji</h3>
             </div>
             <div class="card-body">
+                @if (auth()->user()->role == 'admin')
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <button class="btn btn-warning" data-toggle="modal" data-target="#createGajiModal">Create Data
                             Gaji</button>
                     </div>
                 </div>
+                @endif
                 @if (session()->has('success'))
                 <div class="alert alert-success">
                     {{ session('success') }}
@@ -36,7 +39,9 @@
                             <th>Tunjangan</th>
                             <th>Total Tunjangan</th>
                             <th>Gaji</th>
+                            @if (auth()->user()->role == 'admin')
                             <th>Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -53,8 +58,9 @@
                                 </div>
                                 @endforeach
                             </td>
-                            <td>{{ formatRupiah($item['total_tunjangan']) }}</td>
-                            <td>{{ formatRupiah($item['gaji']) }}</td>
+                            <td>{{ $item['total_tunjangan'] }}</td>
+                            <td>{{ $item['gaji'] }}</td>
+                            @if (auth()->user()->role == 'admin')
                             <td>
                                 <a href="#" class="btn btn-sm btn-secondary edit-btn" data-id="{{ $item['id'] }}"
                                     data-karyawan="{{ $item['id_karyawan'] }}" data-tunjangan="{{ $item['id_tunjangan'] }}"
@@ -66,6 +72,7 @@
                                 <a href="{{ route('gaji.print', $item['id']) }}" class="btn btn-sm btn-info"
                                     target="_blank">Print Slip Gaji</a>
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>

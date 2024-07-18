@@ -18,7 +18,7 @@ class AdminAuthenticate
     public function handle(Request $request, Closure $next)
     {
         $user = Auth::user();
-        
+
         if ($user) {
             return $next($request);
         }

@@ -26,6 +26,22 @@ class GajiController extends Controller
         }
 
         $result = [];
+
+        if (auth()->user()->role == 'karyawan') {
+            $kar = Karyawan::where('id_user', auth()->user()->id)->first();
+            $karyawan = Karyawan::all();
+
+            $gaji = $gaji->filter(function ($g) use ($kar) {
+                return $g->id_karyawan == $kar->id;
+            });
+        }
+
+        function formatRupiah($angka)
+        {
+            $hasil_rupiah = "Rp " . number_format($angka, 2, ',', '.');
+            return $hasil_rupiah;
+        }
+
         foreach ($gaji as $g) {
             $result[] = [
                 'id' => $g->id,
@@ -33,10 +49,10 @@ class GajiController extends Controller
                 'id_tunjangan' => $tunjanganPerKaryawan[$g->id_karyawan] ?? 0,
                 'nama' => $g->karyawan->nama_karyawan,
                 'jabatan' => $g->karyawan->jabatan,
-                'gaji' => $g->gaji,
+                'gaji' => formatRupiah($g->gaji),
                 'nama_tunjangan' => $tunjangan->where('id_karyawan', $g->id_karyawan)->pluck('nama_tunjangan')->implode(', '),
                 'per_tunjangan' => $tunjangan->where('id_karyawan', $g->id_karyawan)->pluck('nominal')->implode(', '),
-                'total_tunjangan' => $tunjangan->where('id_karyawan', $g->id_karyawan)->pluck('nominal')->sum(),
+                'total_tunjangan' => formatRupiah($tunjangan->where('id_karyawan', $g->id_karyawan)->pluck('nominal')->sum()),
                 'detail_tunjangan' => $tunjangan->where('id_karyawan', $g->id_karyawan),
             ];
         }

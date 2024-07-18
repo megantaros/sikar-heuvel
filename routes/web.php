@@ -51,6 +51,12 @@ Route::group(
         Route::resource('kehadiran', KehadiranController::class);
         Route::resource('angsuran', AngsuranController::class);
 
+        Route::post('add-user', [KaryawanController::class, 'addUserEmployee'])->name('add.users');
+        Route::put('update-user/{id}', [KaryawanController::class, 'updateUserEmployee'])->name('update.users');
+
+        Route::post('presensi-masuk', [KehadiranController::class, 'presensiMasuk'])->name('presensi.masuk');
+        Route::post('presensi-pulang', [KehadiranController::class, 'presensiPulang'])->name('presensi.pulang');
+
         Route::get('ajaxShowEmployee/{id}', [KaryawanController::class, 'showEmployee'])->name('ajaxShowEmployee');
     }
 );

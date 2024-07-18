@@ -13,6 +13,16 @@ class HutangController extends Controller
     public function index()
     {
         $hutangs = Hutang::with('karyawan')->get();
+
+        if (auth()->user()->role == 'karyawan') {
+            $kar = Karyawan::where('id_user', auth()->user()->id)->first();
+
+            $hutangs = Hutang::where('id_karyawan', $kar->id)->get();
+            $karyawan = Karyawan::all();
+
+            return view('admin.hutang.index', compact('hutangs', 'karyawan'));
+        }
+
         return view('admin.hutang.index', compact('hutangs'));
     }
 
